@@ -9,8 +9,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import pandas as pd
+import logging
 
-
+logging.basicConfig(level=logging.INFO)
 
 def load_data() -> list[np.ndarray]:
     """
@@ -37,7 +38,7 @@ def load_data() -> list[np.ndarray]:
         file_path = input("Please enter the full path to your data file: ").strip()
             
         if not os.path.exists(file_path):
-            print(f"Error: File '{file_path}' not found. Please try again.")
+            logging.error(f"Error: File '{file_path}' not found. Please try again.")
             continue
             
         try:
@@ -53,19 +54,19 @@ def load_data() -> list[np.ndarray]:
                     try:
                         data = np.genfromtxt([line], dtype=float)
                         if data.size == 0:
-                            print("Warning: Empty dataset skipped.")
+                            logging.warning("Warning: Empty dataset skipped.")
                             continue
                         parsed_lines.append(data)
                     except Exception as e:
-                        print(f"Error parsing dataset: {e}")
+                        logging.error(f"Error parsing dataset: {e}")
                         continue
                 
                 if not parsed_lines:
-                    print("Error: No valid lines of data found in the file.")
+                    logging.error("Error: No valid lines of data found in the file.")
                     continue
                 return parsed_lines
         except Exception as e:
-            print(f"Error reading file: {e}. Please check the format and try again.")
+            logging.error(f"Error reading file: {e}. Please check the format and try again.")
 
                         
 

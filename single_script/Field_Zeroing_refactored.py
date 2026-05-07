@@ -17,7 +17,9 @@ import matplotlib.pyplot as plt
 import os
 import pandas as pd
 from scipy.stats import skew, kurtosis
+import logging
 
+logging.basicConfig(level=logging.INFO)
 
 def load_data() -> list[np.ndarray]:
     """
@@ -39,12 +41,12 @@ def load_data() -> list[np.ndarray]:
     - Non-text or unsupported file formats (e.g. PNG, PDF) will cause reading or parsing errors.
     - The function repeatedly prompts the user until a valid file is successfully processed.
     """
-
+    
     while True:
         file_path = input("Please enter the full path to your data file: ").strip()
             
         if not os.path.exists(file_path):
-            print(f"Error: File '{file_path}' not found. Please try again.")
+            logging.error(f"Error: File '{file_path}' not found. Please try again.")
             continue
             
         try:
@@ -60,19 +62,19 @@ def load_data() -> list[np.ndarray]:
                     try:
                         data = np.genfromtxt([line], dtype=float)
                         if data.size == 0:
-                            print("Warning: Empty dataset skipped.")
+                            logging.warning("Warning: Empty dataset skipped.")
                             continue
                         parsed_lines.append(data)
                     except Exception as e:
-                        print(f"Error parsing dataset: {e}")
+                        logging.error(f"Error parsing dataset: {e}")
                         continue
                 
                 if not parsed_lines:
-                    print("Error: No valid lines of data found in the file.")
+                    logging.error("Error: No valid lines of data found in the file.")
                     continue
                 return parsed_lines
         except Exception as e:
-            print(f"Error reading file: {e}. Please check the format and try again.")
+            logging.error(f"Error reading file: {e}. Please check the format and try again.")
 
                         
 
@@ -189,9 +191,10 @@ def fitted_param(
     if (len(experimental_B) - len(p)) > 0:
         reduced_chi_squared = chi_squared / (len(experimental_B) - len(p))
     else:
-        reduced_chi_squared = ("Undefined! The number of datapoints "
-        "needs to be larger than the number of the fitted parameters.")
-        
+        logging.warning("Undefined! The number of datapoints "
+                        "needs to be larger than the number of the fitted parameters.")
+        reduced_chi_squared = "Undefined!"
+
     return I_0, B0_fit, c_fit, chi_squared, reduced_chi_squared   
 
 
@@ -355,7 +358,7 @@ def process_plot(data: np.ndarray,
     plt.pause(0.001)
     
     if num_non_empty < 3:
-        print(f"Warning: Only {num_non_empty} dataset(s) found. Output will reflect that.")
+        logging.warning(f"Warning: Only {num_non_empty} dataset(s) found. Output will reflect that.")
 
     input("Press Enter to close the plot and exit...")
 
