@@ -3,14 +3,13 @@
 
 # In[ ]:
 
-
-from iminuit import Minuit
-from iminuit.cost import LeastSquares
 import numpy as np
 import matplotlib.pyplot as plt
-import os
 import pandas as pd
 from scipy.stats import skew, kurtosis
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 
 #### PLOTTING results
@@ -22,7 +21,7 @@ def process_plot(data: np.ndarray,
                  set_I_z: np.ndarray,
                  B0_fit: np.ndarray,
                  c_fit: np.ndarray,
-                 ) -> None:
+                 ) -> plt.Figure:
     """
     Extract three scan-specific subsets from an input data array.
 
@@ -35,7 +34,7 @@ def process_plot(data: np.ndarray,
     Then plots total external magnetic field vs current for each x, y, and z direction along with fitted lines.
     Returns
     -------
-    Does not retyrn anything.
+    Returns 1, 2, or 3 figures.
     """
     df = pd.DataFrame(data, columns = ['run_num', 'x', 'y', 'z', 'B', 'err'])
     x_scan = max(df.groupby(['y', 'z']), key=lambda g: len(g[1]))[1].to_numpy()
@@ -99,11 +98,11 @@ def process_plot(data: np.ndarray,
         ax.tick_params(axis='both', which='major', labelsize=12)
 
     plt.tight_layout()
-    plt.draw()
-    plt.pause(0.001)
-    
-    if num_non_empty < 3:
-        print(f"Warning: Only {num_non_empty} dataset(s) found. Output will reflect that.")
 
-    input("Press Enter to close the plot and exit...")
+    if num_non_empty < 3:
+        logging.warning(
+            f"Warning: Only {num_non_empty} dataset(s) found. Output will reflect that."
+        )
+    
+    return fig, axes
 

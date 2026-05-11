@@ -6,6 +6,7 @@
 
 
 import numpy as np
+import matplotlib.pyplot as plt
 from Field_zeroing.load import load_data
 from Field_zeroing.chi_squared import fitted_param
 from Field_zeroing.fit import fitting
@@ -34,7 +35,18 @@ def main():
     printing (data_set, set_currents, I_0, B0_fit, c_fit, chi_squared, reduced_chi_squared)
     
     # step 5: plotting
-    process_plot(data_set, set_I_x, set_I_y, set_I_z, B0_fit, c_fit)
+    fig, axes =process_plot(
+        data_set, 
+        set_I_x, 
+        set_I_y, 
+        set_I_z, 
+        B0_fit, 
+        c_fit
+    )
+
+    fig.savefig("figures/output_magnetic_field_scan.png", dpi=300, bbox_inches="tight")
+    plt.show()
+    plt.close(fig)
 
 if __name__ == "__main__":
     main()
